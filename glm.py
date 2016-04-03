@@ -57,8 +57,8 @@ def fit2(cost_f, cost_df, hyperparam, h_theta0, data):
     eta = hyperparam['eta']
     epochs = hyperparam['epochs']
     minibatches = hyperparam['minibatches']
+    adaptive = hyperparam['adaptive']
     indexes = np.array_split(range(y.shape[0]), minibatches)
-    print(indexes)
     h_theta = h_theta0
     eta_new = eta
     cost = [cost_f(X, y, h_theta)]
@@ -68,7 +68,7 @@ def fit2(cost_f, cost_df, hyperparam, h_theta0, data):
             df = partial(cost_df, X[index], y[index])
             h_theta = fgd.gradient_step(df, eta_new, h_theta)
         cost.append(cost_f(X, y, h_theta))
-        eta_new = 0.99 * eta_new
+        eta_new = adaptive * eta_new
     return h_theta, cost
     
 
