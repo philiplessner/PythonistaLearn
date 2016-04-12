@@ -23,9 +23,9 @@ def load_mnist(path, kind='train'):
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt 
-    X_train, y_train = load_mnist('./', kind='train')
+    X_train, y_train = load_mnist('./data/', kind='train')
     print('Rows: %d, columns: %d' % (X_train.shape[0], X_train.shape[1]))
-    X_test, y_test = load_mnist('./', kind='t10k')
+    X_test, y_test = load_mnist('./data/', kind='t10k')
     print('Rows: %d, columns: %d'% (X_test.shape[0], X_test.shape[1]))
 
     fig, ax = plt.subplots(nrows=2, ncols=5, sharex=True, sharey=True,)

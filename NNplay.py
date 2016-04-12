@@ -49,6 +49,7 @@ def fit(X, y, hyperparam):
     nexamples = X.shape[0]
     noutputs = y.shape[1]
     train_param0 = initialize(nexamples, nfeatures, nhidden, noutputs)
+#    import pdb; pdb.set_trace()
     train_params = list(take(niter, train(X, y, alpha, train_param0)))
     return train_params
 
