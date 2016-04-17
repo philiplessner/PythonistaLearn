@@ -2,7 +2,7 @@ import numpy as np
 from toolz import compose
 import glm
 import logreg as logr
-from ml_util import train_test_split
+from ml_util import train_test_split, encode_labels
 from utility import Scaler, prepend_x0
 from out_utils import logistic_table
 import metrics
@@ -59,4 +59,10 @@ print('False Negatives\t', score.fn)
 print('True Negatives\t', score.tn)
 print('Precision: ', score.precision())
 print('Recall: ', score.recall())
+
+y_teste = encode_labels(np.array(y_test), 2)
+yp_teste = encode_labels(np.array(yp_test), 2)
+mscore = metrics.MScores(y_teste, yp_teste)
+print('Precision: ', mscore.precision())
+print('Recall: ', mscore.recall())
 
