@@ -1,4 +1,5 @@
 import numpy as np
+from toolz import pluck
 from linreg import errors
     
 
@@ -14,7 +15,10 @@ def r2(X, y, h_theta):
 
 class Scores(object):
     def __init__(self, y, yp):
-        true_positives = false_positives = true_negatives = false_negatives = 0
+        true_positives = 0
+        false_positives = 0
+        true_negatives = 0
+        false_negatives = 0
         for yi, ypi in zip(y, yp):
             if yi == 1 and ypi == 1:
                 true_positives += 1
@@ -42,4 +46,37 @@ class Scores(object):
         
     def f1_score(self):
        return 2 * self.precision() * self.recall() / (self.precision() + self.recall())
- 
+       
+       
+class MScores (object):
+    def __init__(self, y, yp):
+        self.tp = []
+        self.fn = []
+        self.fp = []
+        self.tn = []
+        self.nclasses = len(yp[0])
+        for nclass in range(0, len(yp[0])):
+            true_positives = 0
+            false_positives = 0
+            true_negatives = 0
+            false_negatives = 0
+            for yi, ypi in zip(pluck(nclass, y), pluck(nclass, yp)):
+                if yi == 1 and ypi == 1:
+                    true_positives += 1
+                elif yi == 1 and ypi == 0:
+                    false_negatives += 1
+                elif yi == 0 and ypi == 1:
+                    false_positives += 1
+                else:
+                    true_negatives += 1
+            self.tp.append(true_positives)
+            self.fn.append(false_negatives)
+            self.fp.append(false_positives)
+            self.tn.append(true_negatives)
+            
+    def precision(self):      
+        return sum(self.tp[nclass] / (self.tp[nclass] + self.fp[nclass]) for nclass in range(self.nclasses)) / self.nclasses
+        
+    def recall(self):
+        return sum(self.tp[nclass] / (self.tp[nclass] + self.fn[nclass]) for nclass in range(self.nclasses)) / self.nclasses
+        
