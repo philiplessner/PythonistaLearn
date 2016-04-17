@@ -1,4 +1,5 @@
 import random
+import numpy as np
 from toolz import compose
 from utility import Scaler
 
@@ -29,3 +30,11 @@ def scale_data(train_data, test_data):
     scaledX_test = transform(Z_test)
     scaled_test = list(zip(scaledX_test, y_test))
     return scaled_train, scaled_test
+    
+
+def encode_labels(y, noutputs):
+    onehot = np.zeros((y.shape[0], noutputs)) 
+    for irow, val in enumerate(y):
+         onehot[irow, val] = 1.0
+    return onehot
+
