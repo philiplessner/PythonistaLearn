@@ -1,6 +1,4 @@
-from functools import partial
 import numpy as np
-from toolz import take, iterate
 
 
 def logistic(x):
@@ -20,10 +18,10 @@ def initialize(nexamples, nfeatures, nhidden, noutputs):
     return syn0, b0, syn1, b1
 
 
-def backprop(l0, y, alpha, train_param):
+def backprop(X, y, eta, train_param):
     # Foward Propagation
     syn0, b0, syn1, b1 = train_param
-    l1 = logistic(np.dot(l0, syn0) + b0)
+    l1 = logistic(np.dot(X, syn0) + b0)
     l2 = logistic(np.dot(l1, syn1) + b1)
     # Back Propagation
     l2_error = y - l2
@@ -31,27 +29,30 @@ def backprop(l0, y, alpha, train_param):
     l1_error = l2_delta.dot(syn1.T)
     l1_delta = l1_error * dlogistic(l1)
     # Gradient Descent
-    return (syn0 + alpha * (l0.T.dot(l1_delta)),
-            b0 + alpha * np.sum(l1_delta, axis=0, keepdims=True),
-            syn1 + alpha * (l1.T.dot(l2_delta)),
-            b1 + alpha * np.sum(l2_delta, axis=0, keepdims=True))
-
-
-def train(X, y, alpha, train_param0):
-    return iterate(partial(backprop, X, y, alpha), train_param0)
+    return (syn0 + eta * (X.T.dot(l1_delta)),
+            b0 + eta * np.sum(l1_delta, axis=0, keepdims=True),
+            syn1 + eta * (l1.T.dot(l2_delta)),
+            b1 + eta * np.sum(l2_delta, axis=0, keepdims=True))
 
 
 def fit(X, y, hyperparam):
-    alpha = hyperparam['alpha']
-    niter = hyperparam['niter']
+    eta = hyperparam['eta']
+    epochs = hyperparam['epochs']
     nhidden = hyperparam['nhidden']
+    minibatches = hyperparam['minibatches']
     nfeatures = X.shape[1]
     nexamples = X.shape[0]
     noutputs = y.shape[1]
     train_param0 = initialize(nexamples, nfeatures, nhidden, noutputs)
-#    import pdb; pdb.set_trace()
-    train_params = list(take(niter, train(X, y, alpha, train_param0)))
-    return train_params
+    indexes = np.array_split(range(y.shape[0]), minibatches)
+    train_param = train_param0
+    cost = [error(y, predict_proba(X, train_param))]
+    for i in range(epochs):
+        np.random.seed(i)
+        for index in np.random.permutation(indexes):
+            train_param = backprop(X[index], y[index], eta, train_param)
+        cost.append(error(y, predict_proba(X, train_param)))
+    return train_param, cost
 
 
 def predict_proba(X, train_param):

@@ -78,15 +78,17 @@ print(y)
 
 # Train the Network
 hyperparam = {'nhidden': 5,
-              'alpha': 1.5,
-              'niter': 10000}      
-train_params = nn.fit(X, y, hyperparam)
+              'eta': 1.5,
+              'epochs': 10000,
+              'minibatches': 1}      
+#train_params = nn.fit(X, y, hyperparam)
+train_paramf, cost = nn.fit(X, y, hyperparam)
 
 # Print out the results
-train_paramf = train_params[-1]
+#train_paramf = train_params[-1]
 prediction = nn.predict_proba(X, train_paramf)
-predictions = [nn.predict_proba(X, tp) for tp in train_params]
-errors = [nn.error(y, p) for p in predictions]
+#predictions = [nn.predict_proba(X, tp) for tp in train_params]
+#errors = [nn.error(y, p) for p in predictions]
 classes = nn.predict(X, train_paramf)
 print('\nsyn0\n', train_paramf[0])
 print('\nb0\n', train_paramf[1])
@@ -94,10 +96,12 @@ print('\nsyn1\n', train_paramf[2])
 print('\nb1\n', train_paramf[3])
 print('\nClass Probabilities\n', prediction)
 print('\nClass\n', classes)
-print('\nError\n', errors[-1])
+#print('\nError\n', errors[-1])
+print('\nError\n', cost[-1])
 
 fig, ax = plt.subplots(nrows=1, ncols=1)
-ax.semilogy(range(0, len(errors)), errors)
+#ax.semilogy(range(0, len(errors)), errors)
+ax.semilogy(range(0, len(cost)), cost)
 plt.show()
 plt.clf()
 
