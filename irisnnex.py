@@ -37,7 +37,7 @@ scaledX_test = scale.transform(Z_test)
 
 # Train the Network
 hyperparam = {'nhidden': 2,
-              'eta': 0.5,
+              'eta': 0.03,
               'epochs': 5000,
               'minibatches': 3}    
 train_paramf, cost = nn.fit(scaledX_train, y_train, hyperparam)
