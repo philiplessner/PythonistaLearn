@@ -8,7 +8,7 @@ def logistic(z):
 
     
 def LLL(X, y, h_theta):
-    return sum(y * np.log(logistic(np.dot(X, h_theta))) + (1 - y) * np.log(1. - logistic(np.dot(X, h_theta))))
+    return np.sum(y * np.log(logistic(np.dot(X, h_theta))) + (1 - y) * np.log(1. - logistic(np.dot(X, h_theta))))
 
 
 def errors(X, y, h_theta):
