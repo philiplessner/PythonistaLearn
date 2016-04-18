@@ -66,5 +66,9 @@ def predict(X, train_param):
     
     
 def error(y, prediction):
-    return (0.5 / y.shape[0]) * np.sum((prediction - y)**2)
+#    return (0.5 / y.shape[0]) * np.sum((prediction - y)**2)
+    term1 = -y * np.log(prediction)
+    term2 = (1 - y) * np.log(1 - prediction)
+    return np.sum(term1 - term2)
+    
 
