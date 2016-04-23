@@ -66,6 +66,8 @@ print('\nError\n', cost[-1])
 
 fig, ax = plt.subplots(nrows=1, ncols=1)
 ax.semilogy(range(0, len(cost)), cost)
+ax.set_xlabel('Epochs')
+ax.set_ylabel('Cost')
 plt.show()
 plt.clf()
 
