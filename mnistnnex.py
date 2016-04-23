@@ -1,8 +1,7 @@
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-import console
-from getmnist import load_mnist 
+from getmnist import load_mnist
 import NNplay as nn
 from ml_util import encode_labels
 from metrics import MScores
@@ -22,7 +21,7 @@ def plot_misclass(X_test, y_test, y_test_pred):
         ax[i].imshow(img,
                      cmap='Greys',
                      interpolation='nearest')
-        ax[i].set_title('%d) t: %d p: %d' 
+        ax[i].set_title('%d) t: %d p: %d'
                         % (i + 1, correct_lab[i], miscl_lab[i]))
     ax[0].set_xticks([])
     ax[0].set_yticks([])
@@ -30,7 +29,6 @@ def plot_misclass(X_test, y_test, y_test_pred):
     plt.show()
 
 
-console.set_idle_timer_disabled(True)
 # Get the data
 X_train, y_train = load_mnist('./data/', kind='train')
 print('Rows: %d, columns: %d' % (X_train.shape[0], X_train.shape[1]))
@@ -82,5 +80,4 @@ score_test = MScores(q_testh, encode_labels(np.array(classes), 10))
 print('Precision: ', score_test.precision())
 print('Recall: ', score_test.recall())
 plot_misclass(X_test, y_test, classes)
-console.set_idle_timer_disabled(False)
 
