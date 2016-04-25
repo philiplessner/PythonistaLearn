@@ -1,9 +1,10 @@
 import numpy as np
+from utility import prepend_x0
 
 
 def logistic(x):
     return 1.0 / (1.0 + np.exp(-x))
-    
+
 
 def dlogistic(x):
     return x * (1.0 - x)
@@ -12,27 +13,24 @@ def dlogistic(x):
 def initialize(nexamples, nfeatures, nhidden, noutputs):
     np.random.seed(1)
     syn0 = 2*np.random.random((nfeatures, nhidden)) - 1
-    b0 = 2. * np.random.random((1, nhidden)) - 1
-    syn1 = 2*np.random.random((nhidden, noutputs)) - 1
-    b1 = 2. * np.random.random((1, noutputs)) - 1
-    return syn0, b0, syn1, b1
+    syn1 = 2*np.random.random((nhidden + 1, noutputs)) - 1
+    return syn0, syn1
 
 
 def backprop(X, y, eta, train_param):
     # Foward Propagation
-    syn0, b0, syn1, b1 = train_param
-    l1 = logistic(np.dot(X, syn0) + b0)
-    l2 = logistic(np.dot(l1, syn1) + b1)
+    syn0, syn1 = train_param
+    l1 = prepend_x0(logistic(np.dot(X, syn0)))
+    l2 = logistic(np.dot(l1, syn1))
     # Back Propagation
     l2_error = y - l2
     l2_delta = l2_error * dlogistic(l2)
     l1_error = l2_delta.dot(syn1.T)
     l1_delta = l1_error * dlogistic(l1)
+    l1_delta = l1_delta[:, 1:]
     # Gradient Descent
     return (syn0 + eta * (X.T.dot(l1_delta)),
-            b0 + eta * np.sum(l1_delta, axis=0, keepdims=True),
-            syn1 + eta * (l1.T.dot(l2_delta)),
-            b1 + eta * np.sum(l2_delta, axis=0, keepdims=True))
+            syn1 + eta * (l1.T.dot(l2_delta)))
 
 
 def fit(X, y, hyperparam):
@@ -56,19 +54,16 @@ def fit(X, y, hyperparam):
 
 
 def predict_proba(X, train_param):
-    syn0, b0, syn1, b1 = train_param
-    l1 = logistic(np.dot(X, syn0) + b0)
-    return logistic(np.dot(l1, syn1) + b1)
+    syn0, syn1 = train_param
+    l1 = prepend_x0(logistic(np.dot(X, syn0)))
+    return logistic(np.dot(l1, syn1))
 
 
 def predict(X, train_param):
     return np.argmax(predict_proba(X, train_param), axis=1)
-    
-    
+
+
 def error(y, prediction):
-#    return (0.5 / y.shape[0]) * np.sum((prediction - y)**2)
     term1 = -y * np.log(prediction)
     term2 = (1 - y) * np.log(1 - prediction)
     return np.sum(term1 - term2)
-    
-

@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from getmnist import load_mnist
 import NNplay as nn
+from utility import prepend_x0
 from ml_util import encode_labels
 from metrics import MScores
 
@@ -10,7 +11,7 @@ from metrics import MScores
 def plot_misclass(X_test, y_test, y_test_pred):
     miscl_img = X_test[y_test[:y_test_pred.shape[0]] != y_test_pred][:25]
     correct_lab = y_test[y_test[:y_test_pred.shape[0]] != y_test_pred][:25]
-    miscl_lab= y_test_pred[y_test[:y_test_pred.shape[0]] != y_test_pred][:25]
+    miscl_lab = y_test_pred[y_test[:y_test_pred.shape[0]] != y_test_pred][:25]
     fig, ax = plt.subplots(nrows=5,
                            ncols=5,
                            sharex=True,
@@ -33,14 +34,14 @@ def plot_misclass(X_test, y_test, y_test_pred):
 X_train, y_train = load_mnist('./data/', kind='train')
 print('Rows: %d, columns: %d' % (X_train.shape[0], X_train.shape[1]))
 X_test, y_test = load_mnist('./data/', kind='t10k')
-print('Rows: %d, columns: %d'% (X_test.shape[0], X_test.shape[1]))
+print('Rows: %d, columns: %d' % (X_test.shape[0], X_test.shape[1]))
 
 y_trainh = encode_labels(y_train, 10)
 
 Z_train = X_train[0:4000].astype(float)
 q_trainh = y_trainh[0:4000]
-Q_train = Z_train / (255. * 0.99) + 0.01
-Q_test = X_test[0:2000].astype(float) / (255 * 0.99) + 0.01
+Q_train = prepend_x0(Z_train / (255. * 0.99) + 0.01)
+Q_test = prepend_x0(X_test[0:2000].astype(float) / (255 * 0.99) + 0.01)
 y_testh = encode_labels(y_test, 10)
 q_testh = y_testh[0:2000]
 
@@ -57,9 +58,7 @@ print('\nTraining Time:', time.time() - start_train, 'sec\n')
 prediction = nn.predict_proba(Q_train, train_paramf)
 classes = nn.predict(Q_train, train_paramf)
 print('\nsyn0\n', train_paramf[0])
-print('\nb0\n', train_paramf[1])
-print('\nsyn1\n', train_paramf[2])
-print('\nb1\n', train_paramf[3])
+print('\nsyn1\n', train_paramf[1])
 print('\nClass Probabilities\n', prediction)
 print('\nClass\n', classes)
 print('\nError\n', cost[-1])
@@ -82,4 +81,3 @@ score_test = MScores(q_testh, encode_labels(np.array(classes), 10))
 print('Precision: ', score_test.precision())
 print('Recall: ', score_test.recall())
 plot_misclass(X_test, y_test, classes)
-
