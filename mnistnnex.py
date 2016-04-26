@@ -37,8 +37,8 @@ print('Rows: %d, columns: %d' % (X_test.shape[0], X_test.shape[1]))
 
 y_trainh = encode_labels(y_train, 10)
 
-Z_train = X_train[0:4000].astype(float)
-q_trainh = y_trainh[0:4000]
+Z_train = X_train[0:6000].astype(float)
+q_trainh = y_trainh[0:6000]
 Q_train = Z_train / (255. * 0.99) + 0.01
 Q_test = X_test[0:2000].astype(float) / (255 * 0.99) + 0.01
 y_testh = encode_labels(y_test, 10)
@@ -46,14 +46,17 @@ q_testh = y_testh[0:2000]
 
 # Set up the network
 hyperparam = {'nhidden': 50,
-              'eta': 0.01,
-              'epochs': 500,
-              'minibatches': 10}
+              'eta': 0.02,
+              'epochs': 1000,
+              'minibatches': 20}
 print('****Training****')
 start_train = time.time()
 train_paramf, cost = nn.fit(Q_train, q_trainh, hyperparam)
 print('\nTraining Time:', time.time() - start_train, 'sec\n')
 # Print out the results
+print('\n--Hyperameters--')
+for k, v in hyperparam.items():
+    print(k, ':', v)
 prediction = nn.predict_proba(Q_train, train_paramf)
 classes = nn.predict(Q_train, train_paramf)
 print('\nsyn0\n', train_paramf[0])
