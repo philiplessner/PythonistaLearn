@@ -33,34 +33,36 @@ def backprop(X, y, eta, train_param):
             syn1 + eta * (l1.T.dot(l2_delta)))
 
 
-def fit(X, y, hyperparam):
+def fit(Z, y, hyperparam):
     eta = hyperparam['eta']
     epochs = hyperparam['epochs']
     nhidden = hyperparam['nhidden']
     minibatches = hyperparam['minibatches']
+    X = prepend_x0(Z)
     nfeatures = X.shape[1]
     nexamples = X.shape[0]
     noutputs = y.shape[1]
     train_param0 = initialize(nexamples, nfeatures, nhidden, noutputs)
     indexes = np.array_split(range(y.shape[0]), minibatches)
     train_param = train_param0
-    cost = [error(y, predict_proba(X, train_param))]
+    cost = [error(y, predict_proba(Z, train_param))]
     for i in range(epochs):
         np.random.seed(i)
         for index in np.random.permutation(indexes):
             train_param = backprop(X[index], y[index], eta, train_param)
-        cost.append(error(y, predict_proba(X, train_param)))
+        cost.append(error(y, predict_proba(Z, train_param)))
     return train_param, cost
 
 
-def predict_proba(X, train_param):
+def predict_proba(Z, train_param):
     syn0, syn1 = train_param
+    X = prepend_x0(Z)
     l1 = prepend_x0(logistic(np.dot(X, syn0)))
     return logistic(np.dot(l1, syn1))
 
 
-def predict(X, train_param):
-    return np.argmax(predict_proba(X, train_param), axis=1)
+def predict(Z, train_param):
+    return np.argmax(predict_proba(Z, train_param), axis=1)
 
 
 def error(y, prediction):

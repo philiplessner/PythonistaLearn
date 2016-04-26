@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from getmnist import load_mnist
 import NNplay as nn
-from utility import prepend_x0
 from ml_util import encode_labels
 from metrics import MScores
 
@@ -40,8 +39,8 @@ y_trainh = encode_labels(y_train, 10)
 
 Z_train = X_train[0:4000].astype(float)
 q_trainh = y_trainh[0:4000]
-Q_train = prepend_x0(Z_train / (255. * 0.99) + 0.01)
-Q_test = prepend_x0(X_test[0:2000].astype(float) / (255 * 0.99) + 0.01)
+Q_train = Z_train / (255. * 0.99) + 0.01
+Q_test = X_test[0:2000].astype(float) / (255 * 0.99) + 0.01
 y_testh = encode_labels(y_test, 10)
 q_testh = y_testh[0:2000]
 
