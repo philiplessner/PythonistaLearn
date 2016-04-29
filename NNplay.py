@@ -35,6 +35,7 @@ def backprop(X, y, eta, train_param):
 
 def fit(Z, y, hyperparam):
     eta = hyperparam['eta']
+    decrease_rate = hyperparam['decrease_rate']
     epochs = hyperparam['epochs']
     nhidden = hyperparam['nhidden']
     minibatches = hyperparam['minibatches']
@@ -47,6 +48,7 @@ def fit(Z, y, hyperparam):
     train_param = train_param0
     cost = [error(y, predict_proba(Z, train_param))]
     for i in range(epochs):
+        eta = eta / (1. + i * decrease_rate)
         np.random.seed(i)
         for index in np.random.permutation(indexes):
             train_param = backprop(X[index], y[index], eta, train_param)

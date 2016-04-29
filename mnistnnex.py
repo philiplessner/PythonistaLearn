@@ -45,18 +45,19 @@ y_testh = encode_labels(y_test, 10)
 q_testh = y_testh[0:2000]
 
 # Set up the network
-hyperparam = {'nhidden': 50,
-              'eta': 0.02,
-              'epochs': 1000,
+hyperparam = {'nhidden': 100,
+              'eta': 0.005,
+              'decrease_rate': 0.00001,
+              'epochs': 500,
               'minibatches': 20}
 print('****Training****')
+print('\n--Hyperameters--')
+for k, v in hyperparam.items():
+    print(k, ':', v)
 start_train = time.time()
 train_paramf, cost = nn.fit(Q_train, q_trainh, hyperparam)
 print('\nTraining Time:', time.time() - start_train, 'sec\n')
 # Print out the results
-print('\n--Hyperameters--')
-for k, v in hyperparam.items():
-    print(k, ':', v)
 prediction = nn.predict_proba(Q_train, train_paramf)
 classes = nn.predict(Q_train, train_paramf)
 print('\nsyn0\n', train_paramf[0])
