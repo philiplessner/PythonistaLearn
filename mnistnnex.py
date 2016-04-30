@@ -46,7 +46,7 @@ q_testh = y_testh[0:2000]
 
 # Set up the network
 hyperparam = {'nhidden': 100,
-              'eta': 0.005,
+              'eta': 0.01,
               'decrease_rate': 0.00001,
               'epochs': 500,
               'minibatches': 20}

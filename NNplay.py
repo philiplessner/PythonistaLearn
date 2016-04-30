@@ -12,8 +12,10 @@ def dlogistic(x):
 
 def initialize(nexamples, nfeatures, nhidden, noutputs):
     np.random.seed(1)
-    syn0 = 2*np.random.random((nfeatures, nhidden)) - 1
-    syn1 = 2*np.random.random((nhidden + 1, noutputs)) - 1
+    syn0 = 2 * np.random.random((nfeatures, nhidden)) - 1
+#    syn0 = np.random.uniform(-1.0, 1.0, (nfeatures, nhidden))
+#    syn1 = np.random.uniform(-1.0, 1.0, (nhidden + 1, noutputs))
+    syn1 = 2 * np.random.random((nhidden + 1, noutputs)) - 1
     return syn0, syn1
 
 
