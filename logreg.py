@@ -42,8 +42,10 @@ def gradL(X, y, h_theta):
     return np.dot(X.T, errors(X, y, h_theta))
 
 
-def logistic_classes(logistic_probs):
-    return list(map(compose(int, round), logistic_probs))
+def classify(probs):
+    if probs.ndim == 1:
+        return list(map(compose(int, round), probs))
+    return np.argmax(probs, axis=1)
 
 
 def plot_cost(cost):
