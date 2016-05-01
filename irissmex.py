@@ -3,21 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import glm
 import logreg as lr
-from utility import csv_reader, Scaler, prepend_x0
-from ml_util import train_test_split
+from utility import csv_reader, Scaler
+from ml_util import train_test_split, encode_labels
 from out_utils import logistic_table
 from metrics import MScores
 
 
 def softmax_classes(prediction):
     return np.argmax(prediction, axis=1)
-
-
-def encode_labels(y, noutputs):
-    onehot = np.zeros((y.shape[0], noutputs), dtype=np.float64)
-    for irow, val in enumerate(y):
-        onehot[irow, val.astype(np.uint8)] = 1.0
-    return onehot
 
 
 # Get the iris data set
@@ -35,13 +28,11 @@ Z_train, y_train = zip(*train_data)
 y_train = np.array(y_train)
 scale = Scaler()
 scale.fit(Z_train)
-scaledX_train = prepend_x0(scale.transform(Z_train))
+scaledX_train = scale.transform(Z_train)
 Z_test, y_test = zip(*test_data)
 y_test = np.array(y_test)
-scaledX_test = prepend_x0(scale.transform(Z_test))
+scaledX_test = scale.transform(Z_test)
 
-weights0 = np.random.uniform(0.0, 1.0,
-                             (scaledX_train.shape[1], y_train.shape[1]))
 hyperparam = {'eta': 0.5,
               'epochs': 1000,
               'minibatches': 4,
@@ -50,7 +41,6 @@ hyperparam = {'eta': 0.5,
 weightsf, cost = glm.fit(lr.SMC,
                          lr.gradSMC,
                          hyperparam,
-                         weights0,
                          zip(scaledX_train, y_train))
 
 # Print out the results

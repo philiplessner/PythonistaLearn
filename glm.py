@@ -2,34 +2,37 @@ from functools import partial
 import numpy as np
 from toolz import curry
 import fgd
+from utility import prepend_x0
 
 
 @curry
-def fit(cost_f, cost_df, hyperparam, h_theta0, data):
+def fit(cost_f, cost_df, hyperparam, data):
     '''
     Compute values of multiple linear regression coefficients
     Parameters
         cost_f: Cost function
         cost_df: gradient of cost function
-        h_theta0: initial guess for fitting parameters (j cols)
         data: list of tuples [(Xi, yi)]
         X: matrix of independent variables (i rows of observations and j cols
-           of variables). x0=1 for all i
+           of variables).
         y: dependent variable (i rows)
-        eta: learning rate
-        it_max: maximum number of iterations
+        hyperparameters:
+            eta: learning rate
+            epochs: number of passing over the training set
+            minibatches: number of minbatches
+            adaptive: learning rate decrease
     Returns
         Fitting parameters (j cols)
     '''
     Q, w = list(zip(*data))
-    X = np.array(Q)
+    X = prepend_x0(np.array(Q))
     y = np.array(w)
     eta = hyperparam['eta']
     epochs = hyperparam['epochs']
     minibatches = hyperparam['minibatches']
     adaptive = hyperparam['adaptive']
     indexes = np.array_split(range(y.shape[0]), minibatches)
-    h_theta = h_theta0
+    h_theta = np.random.uniform(0.0, 1.0, (X.shape[1], y.shape[1]))
     eta_new = eta
     cost = [cost_f(X, y, h_theta)]
     for i in range(epochs):
@@ -44,4 +47,4 @@ def fit(cost_f, cost_df, hyperparam, h_theta0, data):
 
 @curry
 def predict(f, X, h_theta):
-    return f(np.dot(X, h_theta))
+    return f(np.dot(prepend_x0(X), h_theta))
