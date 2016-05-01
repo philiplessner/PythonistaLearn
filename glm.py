@@ -40,9 +40,8 @@ def fit(cost_f, cost_df, hyperparam, h_theta0, data):
         cost.append(cost_f(X, y, h_theta))
         eta_new = adaptive * eta_new
     return h_theta, cost
-    
+
 
 @curry
 def predict(f, X, h_theta):
     return f(np.dot(X, h_theta))
-
