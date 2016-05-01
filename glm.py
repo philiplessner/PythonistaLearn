@@ -32,7 +32,10 @@ def fit(cost_f, cost_df, hyperparam, data):
     minibatches = hyperparam['minibatches']
     adaptive = hyperparam['adaptive']
     indexes = np.array_split(range(y.shape[0]), minibatches)
-    h_theta = np.random.uniform(0.0, 1.0, (X.shape[1], y.shape[1]))
+    try:
+        h_theta = np.random.uniform(0.0, 1.0, (X.shape[1], y.shape[1]))
+    except IndexError:
+        h_theta = np.random.uniform(0.0, 1.0, X.shape[1])
     eta_new = eta
     cost = [cost_f(X, y, h_theta)]
     for i in range(epochs):
