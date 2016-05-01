@@ -9,10 +9,6 @@ from out_utils import logistic_table
 from metrics import MScores
 
 
-def softmax_classes(prediction):
-    return np.argmax(prediction, axis=1)
-
-
 # Get the iris data set
 # SL: sepal length, SW: Sepal Width, PL: Petal Length, PW: Petal Width
 # 0:  Iris Setosa 1: Iris Versicolour 2: Iris Virginica
@@ -46,7 +42,7 @@ weightsf, cost = glm.fit(lr.SMC,
 # Print out the results
 print('****Training****\n')
 prediction = glm.predict(lr.softmax, scaledX_train, weightsf)
-classes = softmax_classes(prediction)
+classes = lr.classify(prediction)
 print('\nWeight Matrix\n', weightsf)
 print('\nError\n', cost[-1])
 
@@ -61,7 +57,7 @@ plt.clf()
 
 print('****Testing****\n')
 prediction = glm.predict(lr.softmax, scaledX_test, weightsf)
-classes = softmax_classes(prediction)
+classes = lr.classify(prediction)
 logistic_table(prediction, classes, np.argmax(np.array(y_test), axis=1))
 score = MScores(y_test, encode_labels(np.array(classes), 3))
 print('Precision: ', score.precision())

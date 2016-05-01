@@ -1,9 +1,8 @@
 import numpy as np
-from toolz import compose
 import glm
 import logreg as logr
 from ml_util import train_test_split, encode_labels
-from utility import Scaler, prepend_x0
+from utility import Scaler
 from out_utils import logistic_table
 import metrics
 
@@ -18,17 +17,15 @@ y = [np.int32(row[2]) for row in data]
 # Split data into training and testing
 train_data, test_data = train_test_split(zip(Z, y), 0.33)
 # Scale data
-Z_train, y_train = zip(*train_data)    
+Z_train, y_train = zip(*train_data)
 scale = Scaler()
 scale.fit(Z_train)
-transform = compose(prepend_x0, scale.transform)
-scaledX_train = transform(Z_train)
+scaledX_train = scale.transform(Z_train)
 scaled_train = list(zip(scaledX_train, y_train))
 Z_test, y_test = zip(*test_data)
-scaledX_test = transform(Z_test)
+scaledX_test = scale.transform(Z_test)
 scaled_test = list(zip(scaledX_test, y_test))
 # Initialize the patameters
-h_theta0 = np.array([1., 1., 1.])
 
 print('****Minibatch Gradient Descent****\n')
 hyperparam = {'eta': 0.1,
@@ -36,21 +33,20 @@ hyperparam = {'eta': 0.1,
               'minibatches': 1,
               'adaptive': 1.0}
 h_thetaf, cost = glm.fit(logr.LLL,
-                          logr.gradL,
-                          hyperparam,
-                          h_theta0,
-                          scaled_train)
+                         logr.gradL,
+                         hyperparam,
+                         scaled_train)
 print('--Training--\n')
 print(h_thetaf)
 h_thetad = scale.denormalize(h_thetaf)
 print(h_thetad)
 logr.plot_cost(cost)
 probs_train = glm.predict(logr.logistic, scaledX_train, h_thetaf)
-yp_train = logr.logistic_classes(probs_train)
+yp_train = logr.classify(probs_train)
 logistic_table(probs_train, yp_train, y_train)
 print('--Testing--\n')
 probs_test = glm.predict(logr.logistic, scaledX_test, h_thetaf)
-yp_test = logr.logistic_classes(probs_test)
+yp_test = logr.classify(probs_test)
 logistic_table(probs_test, yp_test, y_test)
 score = metrics.Scores(y_test, yp_test)
 print('True Positives\t', score.tp)
@@ -65,4 +61,3 @@ yp_teste = encode_labels(np.array(yp_test), 2)
 mscore = metrics.MScores(y_teste, yp_teste)
 print('Precision: ', mscore.precision())
 print('Recall: ', mscore.recall())
-
