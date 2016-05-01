@@ -1,9 +1,9 @@
 import numpy as np
-from toolz import compose, identity, pluck
+from toolz import identity, pluck
 import linreg as lr
 import glm
 import metrics
-from utility import Scaler, prepend_x0
+from utility import Scaler
 from ml_util import train_test_split
 from out_utils import plot_cost, plot_errors
 
@@ -19,15 +19,12 @@ train_data, test_data = train_test_split(data, 0.33)
 scale = Scaler()
 Z_train, y_train = zip(*train_data)
 scale.fit(Z_train)
-transform = compose(prepend_x0, scale.transform)
-X_train = transform(Z_train)
+X_train = scale.transform(Z_train)
 scaledtrain_data = list(zip(X_train, y_train))
 # Scale the testing data using the same scaling parameters
 # used for the training data
 Z_test, y_test = zip(*test_data)
-X_test = transform(Z_test)
-h_theta0 = np.array([0., 0., 0., 0., 0.])
-
+X_test = scale.transform(Z_test)
 
 print('****Minibatch Gradient Descent****')
 print('\n--Training--\n')
@@ -41,9 +38,9 @@ for k, v in hyperparam.items():
 print('\nNumber of Training Examples: ', X_train.shape[0], '\n')
 
 h_thetaf, cost = glm.fit(lr.J,
-                        lr.gradJ,
-                        hyperparam, 
-                        h_theta0)(scaledtrain_data)
+                         lr.gradJ,
+                         hyperparam,
+                         scaledtrain_data)
 plot_cost(cost)
 h_thetad = scale.denormalize(h_thetaf)
 print('Coefficients\t', h_thetaf)
@@ -59,4 +56,3 @@ yp_test = glm.predict(identity, X_test, h_thetaf)
 plot_errors(y_test, yp_test)
 corr_test = metrics.r2(X_test, y_test, h_thetaf)
 print('R**2\t', corr_test)
-
