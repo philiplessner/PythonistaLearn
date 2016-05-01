@@ -14,13 +14,13 @@ def split_data(data, prob):
 
 
 def train_test_split(data, test_pct):
-    # split the dataset of pairs 
-    train_data, test_data = split_data(data, 1 - test_pct)   
+    # split the dataset of pairs
+    train_data, test_data = split_data(data, 1 - test_pct)
     return train_data, test_data
 
 
 def scale_data(train_data, test_data):
-    Z_train, y_train = zip(*train_data)       
+    Z_train, y_train = zip(*train_data)
     scale = Scaler()
     scale.fit(Z_train)
     transform = compose(prepend_x0, scale.transform)
@@ -30,11 +30,10 @@ def scale_data(train_data, test_data):
     scaledX_test = transform(Z_test)
     scaled_test = list(zip(scaledX_test, y_test))
     return scaled_train, scaled_test
-    
+
 
 def encode_labels(y, noutputs):
-    onehot = np.zeros((y.shape[0], noutputs)) 
+    onehot = np.zeros((y.shape[0], noutputs))
     for irow, val in enumerate(y):
-         onehot[irow, val] = 1.0
+        onehot[irow, val.astype(np.uint32)] = 1.0
     return onehot
-
