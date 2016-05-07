@@ -10,7 +10,7 @@ from metrics import MScores
 def plot_misclass(X_test, y_test, y_test_pred):
     miscl_img = X_test[y_test[:y_test_pred.shape[0]] != y_test_pred][:25]
     correct_lab = y_test[y_test[:y_test_pred.shape[0]] != y_test_pred][:25]
-    miscl_lab= y_test_pred[y_test[:y_test_pred.shape[0]] != y_test_pred][:25]
+    miscl_lab = y_test_pred[y_test[:y_test_pred.shape[0]] != y_test_pred][:25]
     fig, ax = plt.subplots(nrows=5,
                            ncols=5,
                            sharex=True,
@@ -33,7 +33,7 @@ def plot_misclass(X_test, y_test, y_test_pred):
 X_train, y_train = load_mnist('./data/', kind='train')
 print('Rows: %d, columns: %d' % (X_train.shape[0], X_train.shape[1]))
 X_test, y_test = load_mnist('./data/', kind='t10k')
-print('Rows: %d, columns: %d'% (X_test.shape[0], X_test.shape[1]))
+print('Rows: %d, columns: %d' % (X_test.shape[0], X_test.shape[1]))
 
 y_trainh = encode_labels(y_train, 10)
 
@@ -82,4 +82,3 @@ score_test = MScores(q_testh, encode_labels(np.array(classes), 10))
 print('Precision: ', score_test.precision())
 print('Recall: ', score_test.recall())
 plot_misclass(X_test, y_test, classes)
-
